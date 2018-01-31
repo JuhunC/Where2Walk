@@ -37,30 +37,30 @@ public class SignInActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-    // [START configure_signin]
-    // Configure sign-in to request the user's ID, email address, and basic
-    // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-    GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
-            .build();
-    // [END configure_signin]
+        // [START configure_signin]
+        // Configure sign-in to request the user's ID, email address, and basic
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        // [END configure_signin]
 
-    // [START build_client]
-    // Build a GoogleSignInClient with the options specified by gso.
-    //mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-    mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-    // [END build_client]
+        // [START build_client]
+        // Build a GoogleSignInClient with the options specified by gso.
+        //mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        // [END build_client]
 
-    // Button listeners
+        // Button listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
 
-    // [START customize_button]
-    // Set the dimensions of the sign-in button.
-    SignInButton signInButton = findViewById(R.id.sign_in_button);
+        // [START customize_button]
+        // Set the dimensions of the sign-in button.
+        SignInButton signInButton = findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         signInButton.setColorScheme(SignInButton.COLOR_LIGHT);
-    // [END customize_button]
-}
+        // [END customize_button]
+    }
 
     @Override
     public void onStart() {
@@ -149,4 +149,4 @@ public class SignInActivity extends AppCompatActivity implements
                 break;
         }
     }
- }
+}
