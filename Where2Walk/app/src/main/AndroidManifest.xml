@@ -8,7 +8,11 @@
          location permissions for the 'MyLocation' functionality. 
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
+
+    출처: http://mainia.tistory.com/1153 [녹두장군 - 상상을 현실로]
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
