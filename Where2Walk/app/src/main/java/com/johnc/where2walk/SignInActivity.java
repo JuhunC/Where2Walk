@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -19,7 +18,6 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import javax.annotation.Signed;
 
 /**
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
@@ -45,9 +43,10 @@ public class SignInActivity extends AppCompatActivity implements
                 .build();
         // [END configure_signin]
 
+        //Log.d("오마이갓",gso.getAccount().toString());
+
         // [START build_client]
         // Build a GoogleSignInClient with the options specified by gso.
-        //mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         // [END build_client]
 
@@ -57,8 +56,8 @@ public class SignInActivity extends AppCompatActivity implements
         // [START customize_button]
         // Set the dimensions of the sign-in button.
         SignInButton signInButton = findViewById(R.id.sign_in_button);
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
-        signInButton.setColorScheme(SignInButton.COLOR_LIGHT);
+            signInButton.setSize(SignInButton.SIZE_STANDARD);
+            signInButton.setColorScheme(SignInButton.COLOR_LIGHT);
         // [END customize_button]
     }
 
@@ -149,4 +148,4 @@ public class SignInActivity extends AppCompatActivity implements
                 break;
         }
     }
-}
+ }
