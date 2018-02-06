@@ -3,6 +3,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -20,10 +22,13 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.List;
 import java.util.Locale;
@@ -35,6 +40,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LocationManager mlocationManager;
     LocationListener mlocationListener;
 
+    boolean isRouting =false;
+    private Location myLocs[] = new Location[1000];
+    int LocSize = 0;
+    {
+        for(int i =0;i<1000;i++){
+            myLocs[i] = new Location("####");
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         settingGPS();
@@ -54,7 +67,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng Seoul = new LatLng(mLoc.getLatitude(),mLoc.getLongitude());
         //LatLng Seoul = new LatLng(37.54, 126.99);
         mMap.addMarker(new MarkerOptions().position(Seoul).title("Marker in Seoul"));
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+        } else {
+            // Show rationale and request permission.
+        }
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(Seoul,18));
+
     }
     private void settingGPS(){
         mlocationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -63,9 +83,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 double latitude = location.getLatitude();
                 double longitude = location.getLongitude();
                 // TODO 위도, 경도로 하고 싶은 것
+                if(isRouting == true) {
+                    myLocs[LocSize] = location;
+
+                    if(LocSize!=0) {
+                        LatLng begin = new LatLng(myLocs[LocSize - 1].getLatitude(), myLocs[LocSize - 1].getLongitude());
+                        LatLng end = new LatLng(myLocs[LocSize].getLatitude(), myLocs[LocSize].getLongitude());
+
+                        Polyline line = mMap.addPolyline(new PolylineOptions()
+                                .add(begin, end)
+                                .width(10)
+                                .color(Color.RED));
+                        Log.wtf("Activity", "Poits=" + line.getPoints());
+                    }
+                    LocSize++;
+                }
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {
+
             }
 
             public void onProviderEnabled(String provider) {
@@ -97,5 +133,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         return currentLocation;
     }
+    public void onStartEndMarker(View view){
+        String tempTag = "Start";
+        Location tempLoc =  this.getMyLocation();
+        String TagLoc = tempLoc.toString();
+        float Color = BitmapDescriptorFactory.HUE_AZURE;
+        if(isRouting == false){
+            tempTag = "End";
+            Color = BitmapDescriptorFactory.HUE_YELLOW;
+            isRouting = true;
+            myLocs = null; LocSize = 0;
+
+            myLocs[0].set(this.getMyLocation());
+
+            LocSize++;
+        }else{
+
+            isRouting = false;
+        }
+
+        Log.d("on"+tempTag+"Marker: ", TagLoc);
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(tempLoc.getLatitude(), tempLoc.getLongitude())).icon(BitmapDescriptorFactory.defaultMarker(Color))
+                .title("StartEndLocation"));
+    }
+
 
 }
