@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -41,13 +42,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LocationListener mlocationListener;
 
     boolean isRouting =false;
-    private Location myLocs[] = new Location[1000];
+    private ArrayList<Location>  myLocs = new ArrayList<Location>();
+    //private Location myLocs[] = new Location[1000];
+
     int LocSize = 0;
-    {
-        for(int i =0;i<1000;i++){
-            myLocs[i] = new Location("####");
-        }
-    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         settingGPS();
@@ -79,16 +78,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void settingGPS(){
         mlocationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         mlocationListener = new LocationListener() {
+
             public void onLocationChanged(Location location) {
                 double latitude = location.getLatitude();
                 double longitude = location.getLongitude();
                 // TODO 위도, 경도로 하고 싶은 것
                 if(isRouting == true) {
-                    myLocs[LocSize] = location;
+                    Location insertLoc = new Location(location);
+                    myLocs.add(insertLoc);
 
                     if(LocSize!=0) {
-                        LatLng begin = new LatLng(myLocs[LocSize - 1].getLatitude(), myLocs[LocSize - 1].getLongitude());
-                        LatLng end = new LatLng(myLocs[LocSize].getLatitude(), myLocs[LocSize].getLongitude());
+                        LatLng begin = new LatLng(myLocs.get(LocSize - 1).getLatitude(), myLocs.get(LocSize - 1).getLongitude());
+                        LatLng end = new LatLng(myLocs.get(LocSize).getLatitude(), myLocs.get(LocSize).getLongitude());
 
                         Polyline line = mMap.addPolyline(new PolylineOptions()
                                 .add(begin, end)
@@ -111,6 +112,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
     }
+    // Return Current Location
     private Location getMyLocation() {
         Location currentLocation = null;
         // Register the listener with the Location Manager to receive location updates
@@ -142,9 +144,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             tempTag = "End";
             Color = BitmapDescriptorFactory.HUE_YELLOW;
             isRouting = true;
-            myLocs = null; LocSize = 0;
-
-            myLocs[0].set(this.getMyLocation());
+            LocSize = 0;
+            Location insertLoc = new Location(this.getMyLocation());
+            myLocs.add(0,insertLoc);
 
             LocSize++;
         }else{
@@ -157,6 +159,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .position(new LatLng(tempLoc.getLatitude(), tempLoc.getLongitude())).icon(BitmapDescriptorFactory.defaultMarker(Color))
                 .title("StartEndLocation"));
     }
-
-
 }
